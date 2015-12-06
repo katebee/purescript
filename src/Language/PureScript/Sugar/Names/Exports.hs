@@ -1,16 +1,3 @@
------------------------------------------------------------------------------
---
--- Module      :  Language.PureScript.Sugar.Names.Exports
--- License     :  MIT (http://opensource.org/licenses/MIT)
---
--- Maintainer  :  Phil Freeman <paf31@cantab.net>, Gary Burgess <gary.burgess@gmail.com>
--- Stability   :  experimental
--- Portability :
---
--- |
---
------------------------------------------------------------------------------
-
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE ScopedTypeVariables #-}
@@ -60,6 +47,7 @@ findExportable (Module _ _ mn ds _) =
   updateExports exps (TypeSynonymDeclaration tn _ _) = exportType exps tn [] mn
   updateExports exps (ExternDataDeclaration tn _) = exportType exps tn [] mn
   updateExports exps (ValueDeclaration name _ _ _) = exportValue exps name mn
+  updateExports exps (FixityDeclaration _ name (Just _)) = exportValue exps (Op name) mn
   updateExports exps (ExternDeclaration name _) = exportValue exps name mn
   updateExports exps (PositionedDeclaration pos _ d) = rethrowWithPosition pos $ updateExports exps d
   updateExports exps _ = return exps
