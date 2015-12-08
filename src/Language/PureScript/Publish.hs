@@ -197,12 +197,17 @@ getBowerInfo = either (userError . BadRepositoryField) return . tryExtract
 
 extractGithub :: String -> Maybe (D.GithubUser, D.GithubRepo)
 extractGithub =
-  stripPrefix "git://github.com/"
+  stripPrefixes
    >>> fmap (splitOn "/")
    >=> takeTwo
    >>> fmap (D.GithubUser *** (D.GithubRepo . dropDotGit))
 
   where
+  stripPrefixes str =
+    listToMaybe $ catMaybes [ stripPrefix prefix str | prefix <- prefixes ]
+  prefixes :: [String]
+  prefixes = ["git://github.com/", "git@github.com:"]
+
   takeTwo :: [a] -> Maybe (a, a)
   takeTwo [x, y] = Just (x, y)
   takeTwo _ = Nothing
